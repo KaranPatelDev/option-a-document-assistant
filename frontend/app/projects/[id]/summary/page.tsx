@@ -46,7 +46,7 @@ export default function SummaryPage() {
   return (
     <main>
       <a
-        href="/"
+        href="/projects"
         className="mb-4 inline-block text-sm text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
       >
         ← All projects

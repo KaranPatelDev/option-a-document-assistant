@@ -1,6 +1,7 @@
 "use client";
 
 import { Item } from "@/lib/api";
+import { Badge } from "@/components/ui";
 
 /**
  * AI-suggested items the source documents seem to be missing (e.g. an open
@@ -42,9 +43,9 @@ export function SuggestionsPanel({
               onChange={() => onToggleSelect(s.id)}
             />
             <span>
-              <span className="mr-2 rounded-full bg-violet-500/10 px-2 py-0.5 text-xs font-medium text-violet-700 dark:text-violet-400">
+              <Badge tone="violet" className="mr-2">
                 {s.item_type.replaceAll("_", " ")}
-              </span>
+              </Badge>
               {s.content}
             </span>
           </li>

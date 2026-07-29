@@ -1,98 +1,77 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { api, Project } from "@/lib/api";
+import { Card, buttonVariants } from "@/components/ui";
 
-export default function HomePage() {
-  const [projects, setProjects] = useState<Project[] | null>(null);
-  const [name, setName] = useState("");
-  const [creating, setCreating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+const FEATURES = [
+  {
+    title: "Multi-document extraction",
+    body: "Upload up to three project documents and get facts, decisions, assumptions, risks, open questions, and action items extracted automatically — each one traced back to its exact source document and section.",
+  },
+  {
+    title: "Conflict detection",
+    body: "When two documents disagree — different owners, contradictory statements — the assistant flags the conflict so you resolve it explicitly, instead of silently picking one side for you.",
+  },
+  {
+    title: "Human-approval workflow",
+    body: "Every extracted item can be edited, its status changed, or an AI suggestion accepted or rejected. Nothing reaches your final summary without your review and explicit selection.",
+  },
+];
 
-  async function load() {
-    try {
-      setProjects(await api.listProjects());
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to load projects");
-    }
-  }
+const STEPS = [
+  { title: "Create a project", body: "Name it and you're in the review workspace." },
+  { title: "Upload & analyze", body: "Drop in your documents and click Analyze." },
+  { title: "Review & resolve", body: "Edit items, resolve conflicts, accept AI suggestions." },
+  { title: "Save your summary", body: "Select the items that matter and save a reviewed summary." },
+];
 
-  useEffect(() => {
-    load();
-  }, []);
-
-  async function handleCreate(e: React.FormEvent) {
-    e.preventDefault();
-    if (!name.trim()) return;
-    setCreating(true);
-    setError(null);
-    try {
-      const project = await api.createProject(name.trim());
-      setName("");
-      await load();
-      window.location.href = `/projects/${project.id}`;
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to create project");
-    } finally {
-      setCreating(false);
-    }
-  }
-
+export default function LandingPage() {
   return (
     <main>
-      <div className="mb-8">
-        <h1 className="text-3xl font-semibold tracking-tight">Document-to-Action Project Assistant</h1>
-        <p className="mt-2 max-w-2xl text-muted-foreground">
-          Upload up to three project documents, review the AI&apos;s extracted facts, decisions,
-          risks, and action items, then save a reviewed summary.
+      <section className="py-10 text-center sm:py-16">
+        <h1 className="mx-auto max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">
+          Turn project documents into reviewed, actionable decisions.
+        </h1>
+        <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground">
+          Upload your project documents, let AI extract facts, decisions, risks, assumptions and
+          action items with citations, resolve conflicts between sources, and save a
+          human-reviewed summary you can trust.
         </p>
-      </div>
-
-      <form onSubmit={handleCreate} className="mb-10 flex gap-2">
-        <input
-          className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
-          placeholder="New project name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <button
-          type="submit"
-          disabled={creating || !name.trim()}
-          className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:opacity-90 disabled:pointer-events-none disabled:opacity-50"
-        >
-          {creating ? "Creating…" : "Create project"}
-        </button>
-      </form>
-
-      {error && (
-        <div className="mb-6 rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-          {error}
+        <div className="mt-8">
+          <Link href="/projects" className={buttonVariants("primary", "lg")}>
+            Create a project
+          </Link>
         </div>
-      )}
+      </section>
 
-      {projects === null && !error && <p className="text-sm text-muted-foreground">Loading projects…</p>}
-      {projects !== null && projects.length === 0 && (
-        <div className="rounded-lg border border-dashed border-border bg-card/50 px-4 py-10 text-center text-sm text-muted-foreground">
-          No projects yet — create one above to get started.
-        </div>
-      )}
-
-      <ul className="space-y-2">
-        {projects?.map((p) => (
-          <li key={p.id}>
-            <Link
-              href={`/projects/${p.id}`}
-              className="group flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3.5 shadow-sm transition-all hover:border-ring/40 hover:shadow-md"
-            >
-              <span className="font-medium">{p.name}</span>
-              <span className="text-sm text-muted-foreground">
-                {new Date(p.created_at).toLocaleString()}
-              </span>
-            </Link>
-          </li>
+      <section className="grid grid-cols-1 gap-4 py-8 sm:grid-cols-3">
+        {FEATURES.map((f) => (
+          <Card key={f.title} className="p-6">
+            <h3 className="font-semibold tracking-tight">{f.title}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{f.body}</p>
+          </Card>
         ))}
-      </ul>
+      </section>
+
+      <section className="py-12">
+        <h2 className="mb-6 text-center text-2xl font-semibold tracking-tight">How it works</h2>
+        <ol className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {STEPS.map((s, i) => (
+            <li key={s.title} className="rounded-lg border border-border bg-card/50 p-5">
+              <span className="text-sm font-medium text-muted-foreground">Step {i + 1}</span>
+              <h3 className="mt-1 font-semibold tracking-tight">{s.title}</h3>
+              <p className="mt-1.5 text-sm text-muted-foreground">{s.body}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section className="rounded-xl border border-border bg-card py-10 text-center shadow-sm">
+        <h2 className="text-2xl font-semibold tracking-tight">Ready to review your first project?</h2>
+        <div className="mt-6">
+          <Link href="/projects" className={buttonVariants("primary", "lg")}>
+            Create a project
+          </Link>
+        </div>
+      </section>
     </main>
   );
 }

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { api, Conflict, Item } from "@/lib/api";
+import { Button, Input } from "@/components/ui";
+import { cn } from "@/components/ui/cn";
 
 export function ConflictBanner({
   conflict,
@@ -30,11 +32,12 @@ export function ConflictBanner({
 
   return (
     <div
-      className={`mb-3 rounded-lg border p-4 ${
+      className={cn(
+        "mb-3 rounded-lg border p-4",
         conflict.resolved_by_user
           ? "border-emerald-500/30 bg-emerald-500/5"
           : "border-amber-500/40 bg-amber-500/5"
-      }`}
+      )}
     >
       <p className="text-sm font-medium text-amber-700 dark:text-amber-400">
         ⚠ Conflict: {conflict.description}
@@ -52,19 +55,15 @@ export function ConflictBanner({
         </p>
       ) : (
         <div className="mt-3 flex gap-2">
-          <input
-            className="flex-1 rounded-md border border-input bg-background px-2.5 py-1.5 text-sm shadow-sm outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
+          <Input
+            className="flex-1"
             placeholder="Explain how this conflict was resolved"
             value={note}
             onChange={(e) => setNote(e.target.value)}
           />
-          <button
-            onClick={handleResolve}
-            disabled={saving || !note.trim()}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground shadow transition-colors hover:opacity-90 disabled:pointer-events-none disabled:opacity-50"
-          >
+          <Button size="sm" onClick={handleResolve} disabled={saving || !note.trim()}>
             {saving ? "Saving…" : "Resolve"}
-          </button>
+          </Button>
         </div>
       )}
     </div>

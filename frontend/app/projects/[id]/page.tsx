@@ -7,6 +7,7 @@ import { UploadPanel } from "@/components/UploadPanel";
 import { ConflictBanner } from "@/components/ConflictBanner";
 import { ItemsTable } from "@/components/ItemsTable";
 import { SuggestionsPanel } from "@/components/SuggestionsPanel";
+import { Button, Card } from "@/components/ui";
 
 export default function ProjectWorkspacePage() {
   const { id } = useParams<{ id: string }>();
@@ -97,16 +98,12 @@ export default function ProjectWorkspacePage() {
   return (
     <main>
       <div className="mb-6 flex items-center justify-between">
-        <a href="/" className="text-sm text-muted-foreground underline-offset-2 hover:text-foreground hover:underline">
+        <a href="/projects" className="text-sm text-muted-foreground underline-offset-2 hover:text-foreground hover:underline">
           ← All projects
         </a>
-        <button
-          onClick={handleSaveSummary}
-          disabled={selectedIds.size === 0 || savingSummary}
-          className="inline-flex items-center justify-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow transition-colors hover:bg-emerald-700 disabled:pointer-events-none disabled:opacity-50"
-        >
+        <Button variant="success" onClick={handleSaveSummary} disabled={selectedIds.size === 0 || savingSummary}>
           {savingSummary ? "Saving…" : `Save reviewed summary (${selectedIds.size} selected)`}
-        </button>
+        </Button>
       </div>
 
       {error && (
@@ -124,9 +121,9 @@ export default function ProjectWorkspacePage() {
       />
 
       {items.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
+        <Card dashed className="py-8">
           Upload at least one document, then click &quot;Analyze documents&quot; to extract items.
-        </p>
+        </Card>
       ) : (
         <>
           {unresolvedConflicts.length > 0 && (
