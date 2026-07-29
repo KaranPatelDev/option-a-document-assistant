@@ -20,24 +20,29 @@ export function SuggestionsPanel({
   if (suggestions.length === 0) return null;
 
   return (
-    <section className="mb-6 rounded border border-purple-200 bg-purple-50 p-4">
-      <h2 className="mb-2 font-medium text-purple-900">AI-suggested missing items</h2>
-      <p className="mb-3 text-sm text-purple-800">
+    <section className="mb-6 rounded-lg border border-violet-500/30 bg-violet-500/5 p-5">
+      <h2 className="mb-1.5 font-semibold tracking-tight text-violet-700 dark:text-violet-400">
+        AI-suggested missing items
+      </h2>
+      <p className="mb-3 text-sm text-muted-foreground">
         These are not extracted from any document — they are suggestions for gaps the AI noticed.
         Select the checkbox to include a suggestion in your reviewed summary; nothing here is saved
         automatically.
       </p>
       <ul className="space-y-2">
         {suggestions.map((s) => (
-          <li key={s.id} className="flex items-start gap-2 rounded bg-white p-2 text-sm">
+          <li
+            key={s.id}
+            className="flex items-start gap-2.5 rounded-md border border-border bg-card p-2.5 text-sm shadow-sm"
+          >
             <input
               type="checkbox"
-              className="mt-1"
+              className="mt-1 h-3.5 w-3.5 rounded border-input accent-violet-600"
               checked={selectedIds.has(s.id)}
               onChange={() => onToggleSelect(s.id)}
             />
             <span>
-              <span className="mr-2 rounded bg-purple-100 px-1.5 py-0.5 text-xs font-medium text-purple-800">
+              <span className="mr-2 rounded-full bg-violet-500/10 px-2 py-0.5 text-xs font-medium text-violet-700 dark:text-violet-400">
                 {s.item_type.replaceAll("_", " ")}
               </span>
               {s.content}

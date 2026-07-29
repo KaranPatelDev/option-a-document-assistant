@@ -41,15 +41,17 @@ export default function HomePage() {
 
   return (
     <main>
-      <h1 className="text-2xl font-semibold mb-1">Document-to-Action Project Assistant</h1>
-      <p className="text-slate-600 mb-6">
-        Upload up to three project documents, review the AI&apos;s extracted facts, decisions, risks,
-        and action items, then save a reviewed summary.
-      </p>
+      <div className="mb-8">
+        <h1 className="text-3xl font-semibold tracking-tight">Document-to-Action Project Assistant</h1>
+        <p className="mt-2 max-w-2xl text-muted-foreground">
+          Upload up to three project documents, review the AI&apos;s extracted facts, decisions,
+          risks, and action items, then save a reviewed summary.
+        </p>
+      </div>
 
-      <form onSubmit={handleCreate} className="flex gap-2 mb-8">
+      <form onSubmit={handleCreate} className="mb-10 flex gap-2">
         <input
-          className="flex-1 rounded border border-slate-300 px-3 py-2"
+          className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
           placeholder="New project name"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -57,17 +59,23 @@ export default function HomePage() {
         <button
           type="submit"
           disabled={creating || !name.trim()}
-          className="rounded bg-slate-900 px-4 py-2 text-white disabled:opacity-50"
+          className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:opacity-90 disabled:pointer-events-none disabled:opacity-50"
         >
           {creating ? "Creating…" : "Create project"}
         </button>
       </form>
 
-      {error && <div className="mb-4 rounded bg-red-50 px-3 py-2 text-red-700">{error}</div>}
+      {error && (
+        <div className="mb-6 rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {error}
+        </div>
+      )}
 
-      {projects === null && !error && <p className="text-slate-500">Loading projects…</p>}
+      {projects === null && !error && <p className="text-sm text-muted-foreground">Loading projects…</p>}
       {projects !== null && projects.length === 0 && (
-        <p className="text-slate-500">No projects yet — create one above to get started.</p>
+        <div className="rounded-lg border border-dashed border-border bg-card/50 px-4 py-10 text-center text-sm text-muted-foreground">
+          No projects yet — create one above to get started.
+        </div>
       )}
 
       <ul className="space-y-2">
@@ -75,10 +83,10 @@ export default function HomePage() {
           <li key={p.id}>
             <Link
               href={`/projects/${p.id}`}
-              className="block rounded border border-slate-200 bg-white px-4 py-3 hover:border-slate-400"
+              className="group flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3.5 shadow-sm transition-all hover:border-ring/40 hover:shadow-md"
             >
               <span className="font-medium">{p.name}</span>
-              <span className="ml-2 text-sm text-slate-400">
+              <span className="text-sm text-muted-foreground">
                 {new Date(p.created_at).toLocaleString()}
               </span>
             </Link>

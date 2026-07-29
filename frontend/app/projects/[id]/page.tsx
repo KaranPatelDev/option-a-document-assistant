@@ -88,7 +88,7 @@ export default function ProjectWorkspacePage() {
     }
   }
 
-  if (loading) return <p className="text-slate-500">Loading project…</p>;
+  if (loading) return <p className="text-sm text-muted-foreground">Loading project…</p>;
 
   const reviewItems = items.filter((i) => !i.is_ai_suggestion);
   const suggestionItems = items.filter((i) => i.is_ai_suggestion);
@@ -96,20 +96,24 @@ export default function ProjectWorkspacePage() {
 
   return (
     <main>
-      <div className="mb-4 flex items-center justify-between">
-        <a href="/" className="text-sm text-slate-500 underline">
+      <div className="mb-6 flex items-center justify-between">
+        <a href="/" className="text-sm text-muted-foreground underline-offset-2 hover:text-foreground hover:underline">
           ← All projects
         </a>
         <button
           onClick={handleSaveSummary}
           disabled={selectedIds.size === 0 || savingSummary}
-          className="rounded bg-emerald-600 px-4 py-2 text-sm text-white disabled:opacity-50"
+          className="inline-flex items-center justify-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow transition-colors hover:bg-emerald-700 disabled:pointer-events-none disabled:opacity-50"
         >
           {savingSummary ? "Saving…" : `Save reviewed summary (${selectedIds.size} selected)`}
         </button>
       </div>
 
-      {error && <div className="mb-4 rounded bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>}
+      {error && (
+        <div className="mb-4 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {error}
+        </div>
+      )}
 
       <UploadPanel
         projectId={id}
@@ -120,14 +124,14 @@ export default function ProjectWorkspacePage() {
       />
 
       {items.length === 0 ? (
-        <p className="text-slate-500">
+        <p className="rounded-lg border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
           Upload at least one document, then click &quot;Analyze documents&quot; to extract items.
         </p>
       ) : (
         <>
           {unresolvedConflicts.length > 0 && (
             <section className="mb-6">
-              <h2 className="mb-2 font-medium">Conflicts to resolve ({unresolvedConflicts.length})</h2>
+              <h2 className="mb-2 font-semibold tracking-tight">Conflicts to resolve ({unresolvedConflicts.length})</h2>
               {conflicts.map((c) => (
                 <ConflictBanner key={c.id} conflict={c} items={items} onResolved={handleConflictResolved} />
               ))}

@@ -27,31 +27,44 @@ export default function SummaryPage() {
       .catch((e) => setError(e instanceof Error ? e.message : "Failed to load summary"));
   }, [summaryId]);
 
-  if (!summaryId) return <p className="text-red-700">No summary specified.</p>;
-  if (error) return <div className="rounded bg-red-50 px-3 py-2 text-red-700">{error}</div>;
-  if (!summary) return <p className="text-slate-500">Loading summary…</p>;
+  if (!summaryId)
+    return (
+      <div className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        No summary specified.
+      </div>
+    );
+  if (error)
+    return (
+      <div className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        {error}
+      </div>
+    );
+  if (!summary) return <p className="text-sm text-muted-foreground">Loading summary…</p>;
 
   const groups = groupByType(summary.items);
 
   return (
     <main>
-      <a href="/" className="mb-4 inline-block text-sm text-slate-500 underline">
+      <a
+        href="/"
+        className="mb-4 inline-block text-sm text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+      >
         ← All projects
       </a>
-      <h1 className="mb-1 text-2xl font-semibold">Reviewed Project Action Summary</h1>
-      <p className="mb-6 text-sm text-slate-500">
+      <h1 className="mb-1 text-2xl font-semibold tracking-tight">Reviewed Project Action Summary</h1>
+      <p className="mb-8 text-sm text-muted-foreground">
         Saved {new Date(summary.saved_at).toLocaleString()} · every item below links back to its
         source document and section.
       </p>
 
       {Object.entries(groups).map(([type, groupItems]) => (
         <section key={type} className="mb-6">
-          <h2 className="mb-2 font-medium capitalize">{type.replaceAll("_", " ")}s</h2>
-          <ul className="space-y-2">
+          <h2 className="mb-2 font-semibold capitalize tracking-tight">{type.replaceAll("_", " ")}s</h2>
+          <ul className="space-y-2.5">
             {groupItems.map((item) => (
-              <li key={item.id} className="rounded border border-slate-200 bg-white p-3">
-                <p className="text-sm text-slate-800">{item.content}</p>
-                <p className="mt-1 text-xs text-slate-500">
+              <li key={item.id} className="rounded-lg border border-border bg-card p-4 shadow-sm">
+                <p className="text-sm leading-relaxed text-foreground">{item.content}</p>
+                <p className="mt-1.5 text-xs text-muted-foreground">
                   Source: {item.document_filename ?? "AI suggestion"}
                   {item.section_ref ? ` · ${item.section_ref}` : ""} · status: {item.status}
                   {item.item_type === "action_item" ? ` · action: ${item.action_status}` : ""}

@@ -9,6 +9,8 @@ backend/backend.log
 frontend/node_modules/
 frontend/.next/
 frontend/frontend.log
+frontend/*.tsbuildinfo
+frontend/.vercel/
 
 # Env files (never commit real secrets)
 .env

@@ -30,24 +30,30 @@ export function ConflictBanner({
 
   return (
     <div
-      className={`mb-3 rounded border p-3 ${
-        conflict.resolved_by_user ? "border-green-200 bg-green-50" : "border-amber-300 bg-amber-50"
+      className={`mb-3 rounded-lg border p-4 ${
+        conflict.resolved_by_user
+          ? "border-emerald-500/30 bg-emerald-500/5"
+          : "border-amber-500/40 bg-amber-500/5"
       }`}
     >
-      <p className="text-sm font-medium text-amber-900">⚠ Conflict: {conflict.description}</p>
-      <ul className="mt-1 list-disc pl-5 text-sm text-slate-700">
+      <p className="text-sm font-medium text-amber-700 dark:text-amber-400">
+        ⚠ Conflict: {conflict.description}
+      </p>
+      <ul className="mt-2 list-disc space-y-0.5 pl-5 text-sm text-foreground/80">
         {involved.map((i) => (
           <li key={i.id}>
-            {i.content} <span className="text-slate-400">({i.document_filename})</span>
+            {i.content} <span className="text-muted-foreground">({i.document_filename})</span>
           </li>
         ))}
       </ul>
       {conflict.resolved_by_user ? (
-        <p className="mt-2 text-sm text-green-800">Resolved: {conflict.resolution_note}</p>
+        <p className="mt-2 text-sm text-emerald-700 dark:text-emerald-400">
+          Resolved: {conflict.resolution_note}
+        </p>
       ) : (
-        <div className="mt-2 flex gap-2">
+        <div className="mt-3 flex gap-2">
           <input
-            className="flex-1 rounded border border-slate-300 px-2 py-1 text-sm"
+            className="flex-1 rounded-md border border-input bg-background px-2.5 py-1.5 text-sm shadow-sm outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
             placeholder="Explain how this conflict was resolved"
             value={note}
             onChange={(e) => setNote(e.target.value)}
@@ -55,7 +61,7 @@ export function ConflictBanner({
           <button
             onClick={handleResolve}
             disabled={saving || !note.trim()}
-            className="rounded bg-slate-900 px-3 py-1 text-sm text-white disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground shadow transition-colors hover:opacity-90 disabled:pointer-events-none disabled:opacity-50"
           >
             {saving ? "Saving…" : "Resolve"}
           </button>

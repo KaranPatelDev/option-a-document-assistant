@@ -58,37 +58,45 @@ export function UploadPanel({
   }
 
   return (
-    <section className="rounded border border-slate-200 bg-white p-4 mb-6">
-      <h2 className="font-medium mb-3">
-        Documents ({documents.length}/{MAX_DOCUMENTS})
+    <section className="mb-6 rounded-lg border border-border bg-card p-5 shadow-sm">
+      <h2 className="mb-3 font-semibold tracking-tight">
+        Documents <span className="font-normal text-muted-foreground">({documents.length}/{MAX_DOCUMENTS})</span>
       </h2>
 
       {documents.length === 0 && (
-        <p className="text-sm text-slate-500 mb-3">No documents uploaded yet.</p>
+        <p className="mb-3 text-sm text-muted-foreground">No documents uploaded yet.</p>
       )}
 
-      <ul className="mb-4 space-y-1">
+      <ul className="mb-4 space-y-1.5">
         {documents.map((d) => (
-          <li key={d.id} className="text-sm flex items-center justify-between rounded bg-slate-50 px-3 py-2">
-            <span>{d.filename}</span>
-            <span className="text-slate-500">
-              {d.doc_type.replaceAll("_", " ")} ({Math.round(d.doc_type_confidence * 100)}%)
+          <li
+            key={d.id}
+            className="flex items-center justify-between rounded-md border border-border bg-secondary/40 px-3 py-2 text-sm"
+          >
+            <span className="font-medium">{d.filename}</span>
+            <span className="text-muted-foreground">
+              {d.doc_type.replaceAll("_", " ")} · {Math.round(d.doc_type_confidence * 100)}%
             </span>
           </li>
         ))}
       </ul>
 
       {!atLimit && (
-        <div className="space-y-2 mb-3">
-          <input type="file" accept=".txt,.md" onChange={handleFile} className="block text-sm" />
+        <div className="mb-4 space-y-2.5">
           <input
-            className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+            type="file"
+            accept=".txt,.md"
+            onChange={handleFile}
+            className="block text-sm text-muted-foreground file:mr-3 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-secondary-foreground hover:file:opacity-80"
+          />
+          <input
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
             placeholder="Filename (e.g. meeting-notes.md)"
             value={filename}
             onChange={(e) => setFilename(e.target.value)}
           />
           <textarea
-            className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
             rows={6}
             placeholder="Or paste document text here"
             value={rawText}
@@ -97,21 +105,27 @@ export function UploadPanel({
           <button
             onClick={handleUpload}
             disabled={uploading}
-            className="rounded bg-slate-900 px-4 py-2 text-sm text-white disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground shadow-sm transition-colors hover:opacity-90 disabled:pointer-events-none disabled:opacity-50"
           >
             {uploading ? "Uploading…" : "Add document"}
           </button>
         </div>
       )}
 
-      {atLimit && <p className="text-sm text-slate-500 mb-3">Maximum of {MAX_DOCUMENTS} documents reached.</p>}
+      {atLimit && (
+        <p className="mb-4 text-sm text-muted-foreground">Maximum of {MAX_DOCUMENTS} documents reached.</p>
+      )}
 
-      {error && <div className="mb-3 rounded bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>}
+      {error && (
+        <div className="mb-4 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {error}
+        </div>
+      )}
 
       <button
         onClick={onAnalyze}
         disabled={documents.length === 0 || analyzing}
-        className="rounded bg-indigo-600 px-4 py-2 text-sm text-white disabled:opacity-50"
+        className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:opacity-90 disabled:pointer-events-none disabled:opacity-50"
       >
         {analyzing ? "Analyzing…" : "Analyze documents"}
       </button>

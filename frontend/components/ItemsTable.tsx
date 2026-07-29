@@ -47,25 +47,25 @@ function ItemRow({
   }
 
   return (
-    <li className="rounded border border-slate-200 bg-white p-3">
+    <li className="rounded-lg border border-border bg-card p-4 shadow-sm transition-colors hover:border-ring/30">
       <div className="flex items-start gap-3">
         <input
           type="checkbox"
-          className="mt-1"
+          className="mt-1 h-3.5 w-3.5 rounded border-input accent-primary"
           checked={selected}
           onChange={() => onToggleSelect(item.id)}
           title="Include in saved summary"
         />
         <div className="flex-1">
           {item.is_ai_suggestion && (
-            <span className="mb-1 inline-block rounded bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-800">
+            <span className="mb-1.5 inline-block rounded-full bg-violet-500/10 px-2 py-0.5 text-xs font-medium text-violet-700 dark:text-violet-400">
               AI suggestion — not from a document
             </span>
           )}
           {editing ? (
             <div className="space-y-2">
               <textarea
-                className="w-full rounded border border-slate-300 px-2 py-1 text-sm"
+                className="w-full rounded-md border border-input bg-background px-2.5 py-1.5 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 rows={2}
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
@@ -74,7 +74,7 @@ function ItemRow({
                 <button
                   onClick={saveContent}
                   disabled={saving}
-                  className="rounded bg-slate-900 px-2 py-1 text-xs text-white"
+                  className="rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground transition-colors hover:opacity-90"
                 >
                   {saving ? "Saving…" : "Save"}
                 </button>
@@ -83,37 +83,37 @@ function ItemRow({
                     setDraft(item.content);
                     setEditing(false);
                   }}
-                  className="rounded bg-slate-200 px-2 py-1 text-xs"
+                  className="rounded-md bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground transition-colors hover:opacity-80"
                 >
                   Cancel
                 </button>
               </div>
             </div>
           ) : (
-            <p className="text-sm text-slate-800">{item.content}</p>
+            <p className="text-sm leading-relaxed text-foreground">{item.content}</p>
           )}
 
-          <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500">
+          <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
             <span>
               Source: {item.document_filename ?? "—"}
               {item.section_ref ? ` · ${item.section_ref}` : ""}
             </span>
             <span>Confidence: {Math.round(item.ai_confidence * 100)}%</span>
             {item.conflict_group_id && (
-              <span className="rounded bg-amber-100 px-2 py-0.5 font-medium text-amber-800">
+              <span className="rounded-full bg-amber-500/10 px-2 py-0.5 font-medium text-amber-700 dark:text-amber-400">
                 ⚠ has conflict
               </span>
             )}
           </div>
 
-          <div className="mt-2 flex flex-wrap items-center gap-3">
+          <div className="mt-2.5 flex flex-wrap items-center gap-3">
             {!editing && (
-              <button onClick={() => setEditing(true)} className="text-xs text-slate-600 underline">
+              <button onClick={() => setEditing(true)} className="text-xs font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline">
                 Edit
               </button>
             )}
             <select
-              className="rounded border border-slate-300 px-2 py-1 text-xs"
+              className="rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               value={item.status}
               onChange={(e) => changeStatus(e.target.value as ItemStatus)}
             >
@@ -147,27 +147,32 @@ export function ItemsTable({
 
   return (
     <section>
-      <div className="mb-3 flex flex-wrap gap-2">
+      <div className="mb-4 flex flex-wrap gap-1.5 rounded-lg bg-secondary/50 p-1">
         {TABS.map((t) => {
           const count = items.filter((i) => i.item_type === t.key).length;
+          const active = tab === t.key;
           return (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`rounded px-3 py-1.5 text-sm ${
-                tab === t.key ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"
+              className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                active
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {t.label} ({count})
+              {t.label} <span className={active ? "text-muted-foreground" : ""}>({count})</span>
             </button>
           );
         })}
       </div>
 
       {filtered.length === 0 ? (
-        <p className="text-sm text-slate-500">No {tab.replaceAll("_", " ")} items yet.</p>
+        <p className="rounded-lg border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
+          No {tab.replaceAll("_", " ")} items yet.
+        </p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-2.5">
           {filtered.map((item) => (
             <ItemRow
               key={item.id}
