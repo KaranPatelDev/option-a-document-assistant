@@ -10,7 +10,12 @@ re-classifying status (confirmed / assumption / unresolved), resolving conflicts
 approving/rejecting/editing proposed action items. **The AI never creates or assigns a task on
 its own** — every action item starts `proposed` and only a human review action can change that.
 
-**Live deployment:** `<fill in after deploying — see Deployment section>`
+**Live deployment:**
+- Frontend (Vercel): https://frontend-mu-seven-23.vercel.app
+- Backend (Render): _pending — see Deployment section below for the exact setup steps; the
+  frontend above will show connection errors until the backend is deployed and
+  `NEXT_PUBLIC_API_URL` is set on Vercel to point at it._
+- Repo: https://github.com/KaranPatelDev/option-a-document-assistant
 
 ## Architecture
 
@@ -132,9 +137,20 @@ items).
 
 ## Deployment
 
-- **Backend**: Render web service (Python). Build command `pip install -r requirements.txt`,
-  start command `uvicorn app.main:app --host 0.0.0.0 --port $PORT`. Attach a Render (or Neon)
-  Postgres instance and set `DATABASE_URL` accordingly. Set `GROQ_API_KEY` as a secret env var.
-  Set `CORS_ORIGINS` to the deployed Vercel URL.
-- **Frontend**: Vercel project rooted at `frontend/`. Set `NEXT_PUBLIC_API_URL` to the deployed
-  Render backend URL.
+- **Frontend (done)**: Vercel project `option-a-document-assistant`, deployed from `frontend/` —
+  https://frontend-mu-seven-23.vercel.app
+- **Backend (remaining step)**: Render web service (Python), root directory `backend`.
+  1. render.com → New → Web Service → connect GitHub repo `KaranPatelDev/option-a-document-assistant`
+  2. Root Directory: `backend`
+  3. Build Command: `pip install -r requirements.txt`
+  4. Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+  5. New → PostgreSQL (free tier) → copy its internal connection string
+  6. On the web service, set env vars:
+     - `DATABASE_URL` = the Postgres connection string, with `postgresql://` changed to
+       `postgresql+psycopg://` (SQLAlchemy driver requirement)
+     - `GROQ_API_KEY` = your Groq key
+     - `CORS_ORIGINS` = `https://frontend-mu-seven-23.vercel.app`
+  7. Once deployed, copy the Render service URL (e.g. `https://option-a-xxxx.onrender.com`) and
+     set it as `NEXT_PUBLIC_API_URL` in the Vercel project's environment variables, then redeploy
+     the frontend (`vercel --prod` from `frontend/`, or via the Vercel dashboard's Redeploy
+     button) so the build picks up the new value.
