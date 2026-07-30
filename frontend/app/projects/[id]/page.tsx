@@ -81,7 +81,7 @@ export default function ProjectWorkspacePage() {
     setError(null);
     try {
       const summary = await api.saveSummary(id, Array.from(selectedIds));
-      router.push(`/projects/${id}/summary?summaryId=${summary.id}`);
+      router.push(`/projects/${id}/summary?summaryId=${summary.id}&saved=1`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to save summary");
     } finally {
@@ -101,7 +101,7 @@ export default function ProjectWorkspacePage() {
         <a href="/projects" className="text-sm text-muted-foreground underline-offset-2 hover:text-foreground hover:underline">
           ← All projects
         </a>
-        <Button variant="success" onClick={handleSaveSummary} disabled={selectedIds.size === 0 || savingSummary}>
+        <Button variant="success" onClick={handleSaveSummary} disabled={selectedIds.size === 0} loading={savingSummary}>
           {savingSummary ? "Saving…" : `Save reviewed summary (${selectedIds.size} selected)`}
         </Button>
       </div>

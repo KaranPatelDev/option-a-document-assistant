@@ -51,6 +51,7 @@ class ItemOut(BaseModel):
     action_status: ActionStatus
     conflict_group_id: uuid.UUID | None
     document_filename: str | None = None
+    related_standards: list[str] = []
 
     model_config = {"from_attributes": True}
 

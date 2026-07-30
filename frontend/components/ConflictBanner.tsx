@@ -16,15 +16,19 @@ export function ConflictBanner({
 }) {
   const [note, setNote] = useState(conflict.resolution_note || "");
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const involved = items.filter((i) => conflict.item_ids.includes(i.id));
 
   async function handleResolve() {
     if (!note.trim()) return;
     setSaving(true);
+    setError(null);
     try {
       const updated = await api.resolveConflict(conflict.id, note.trim());
       onResolved(updated);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to resolve — try again");
     } finally {
       setSaving(false);
     }
@@ -66,6 +70,7 @@ export function ConflictBanner({
           </Button>
         </div>
       )}
+      {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
     </div>
   );
 }

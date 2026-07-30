@@ -44,6 +44,10 @@ export function UploadPanel({
       setError("Provide a filename and non-empty document text");
       return;
     }
+    if (!/\.(txt|md)$/i.test(filename.trim())) {
+      setError("Only .txt or .md files are supported");
+      return;
+    }
     setUploading(true);
     setError(null);
     try {
@@ -117,7 +121,7 @@ export function UploadPanel({
         </div>
       )}
 
-      <Button onClick={onAnalyze} disabled={documents.length === 0 || analyzing}>
+      <Button onClick={onAnalyze} disabled={documents.length === 0} loading={analyzing}>
         {analyzing ? "Analyzing…" : "Analyze documents"}
       </Button>
     </Card>

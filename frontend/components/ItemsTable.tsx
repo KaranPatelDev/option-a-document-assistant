@@ -31,21 +31,33 @@ function ItemRow({
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(item.content);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function saveContent() {
     setSaving(true);
+    setError(null);
     try {
       const updated = await api.updateItem(item.id, { content: draft });
       onChange(updated);
       setEditing(false);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to save — try again");
     } finally {
       setSaving(false);
     }
   }
 
   async function changeStatus(status: ItemStatus) {
-    const updated = await api.updateItem(item.id, { status });
-    onChange(updated);
+    setSaving(true);
+    setError(null);
+    try {
+      const updated = await api.updateItem(item.id, { status });
+      onChange(updated);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to update status — try again");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -96,6 +108,14 @@ function ItemRow({
             {item.conflict_group_id && <Badge tone="warning">⚠ has conflict</Badge>}
           </div>
 
+          {item.related_standards.length > 0 && (
+            <ul className="mt-2 space-y-1 border-l-2 border-blue-500/40 pl-2.5 text-xs text-muted-foreground">
+              {item.related_standards.map((s) => (
+                <li key={s}>📋 {s}</li>
+              ))}
+            </ul>
+          )}
+
           <div className="mt-2.5 flex flex-wrap items-center gap-3">
             {!editing && (
               <button onClick={() => setEditing(true)} className="text-xs font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline">
@@ -105,6 +125,7 @@ function ItemRow({
             <Select
               className="px-2 py-1 text-xs"
               value={item.status}
+              disabled={saving}
               onChange={(e) => changeStatus(e.target.value as ItemStatus)}
             >
               {STATUS_OPTIONS.map((s) => (
@@ -115,6 +136,10 @@ function ItemRow({
             </Select>
             {item.item_type === "action_item" && <ActionItemControls item={item} onChange={onChange} />}
           </div>
+
+          {error && (
+            <p className="mt-2 text-xs text-destructive">{error}</p>
+          )}
         </div>
       </div>
     </Card>

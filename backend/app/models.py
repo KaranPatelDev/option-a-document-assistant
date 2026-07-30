@@ -104,6 +104,7 @@ class ExtractedItem(Base):
     is_ai_suggestion: Mapped[bool] = mapped_column(Boolean, default=False)
     action_status: Mapped[ActionStatus] = mapped_column(Enum(ActionStatus), default=ActionStatus.none)
     conflict_group_id: Mapped[uuid.UUID | None] = mapped_column(GUID(), ForeignKey("conflict_groups.id"), nullable=True)
+    related_standards: Mapped[list[str]] = mapped_column(StringList(), default=list)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now, onupdate=_now)
 

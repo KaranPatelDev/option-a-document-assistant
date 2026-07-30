@@ -171,6 +171,7 @@ def analyze_project(project: Project, db: Session) -> list[ExtractedItem]:
         extraction = extract_items(doc)
         for draft in extraction.items:
             action_status = ActionStatus.proposed if draft.item_type == ItemType.action_item else ActionStatus.none
+            standards = knowledge_base.retrieve_relevant_standards(db, draft.content)
             row = ExtractedItem(
                 project_id=project.id,
                 document_id=doc.id,
@@ -181,6 +182,7 @@ def analyze_project(project: Project, db: Session) -> list[ExtractedItem]:
                 ai_confidence=draft.confidence,
                 is_ai_suggestion=False,
                 action_status=action_status,
+                related_standards=[f"{s.title}: {s.content}" for s in standards],
             )
             db.add(row)
             all_items.append(row)

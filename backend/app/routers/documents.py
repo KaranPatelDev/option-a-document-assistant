@@ -1,3 +1,4 @@
+import re
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -11,6 +12,7 @@ from app.services.extraction import analyze_project
 router = APIRouter(prefix="/projects/{project_id}", tags=["documents"])
 
 MAX_DOCUMENTS = 3
+_ALLOWED_FILENAME_RE = re.compile(r"\.(txt|md)$", re.IGNORECASE)
 
 
 @router.post("/documents", response_model=DocumentOut)
@@ -25,6 +27,9 @@ def upload_document(project_id: uuid.UUID, payload: DocumentCreate, db: Session 
 
     if not payload.raw_text.strip():
         raise HTTPException(status_code=400, detail="Document text must not be empty")
+
+    if not _ALLOWED_FILENAME_RE.search(payload.filename.strip()):
+        raise HTTPException(status_code=400, detail="Filename must end in .txt or .md")
 
     doc = Document(project_id=project_id, filename=payload.filename, raw_text=payload.raw_text)
     db.add(doc)
