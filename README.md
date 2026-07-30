@@ -12,9 +12,9 @@ its own** — every action item starts `proposed` and only a human review action
 
 **Live deployment:**
 - Frontend (Vercel): https://frontend-mu-seven-23.vercel.app
-- Backend (Render): _pending — see Deployment section below for the exact setup steps; the
-  frontend above will show connection errors until the backend is deployed and
-  `NEXT_PUBLIC_API_URL` is set on Vercel to point at it._
+- Backend (Render): https://option-a-document-assistant-backend.onrender.com
+  (free tier — the first request after a period of inactivity can take up to ~50s to wake the
+  instance)
 - Repo: https://github.com/KaranPatelDev/option-a-document-assistant
 
 ## Architecture
@@ -139,18 +139,26 @@ items).
 
 - **Frontend (done)**: Vercel project `option-a-document-assistant`, deployed from `frontend/` —
   https://frontend-mu-seven-23.vercel.app
-- **Backend (remaining step)**: Render web service (Python), root directory `backend`.
+- **Backend (done)**: Render web service (Python), root directory `backend` —
+  https://option-a-document-assistant-backend.onrender.com
   1. render.com → New → Web Service → connect GitHub repo `KaranPatelDev/option-a-document-assistant`
   2. Root Directory: `backend`
   3. Build Command: `pip install -r requirements.txt`
   4. Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-  5. New → PostgreSQL (free tier) → copy its internal connection string
+  5. Provision a Postgres instance (Render free tier only allows one free Postgres per account;
+     this project shares a single free Neon Postgres instance with Option B — the two apps' table
+     names don't collide, so this is safe) → copy its connection string
   6. On the web service, set env vars:
      - `DATABASE_URL` = the Postgres connection string, with `postgresql://` changed to
-       `postgresql+psycopg://` (SQLAlchemy driver requirement)
+       `postgresql+psycopg://` (SQLAlchemy driver requirement — the project uses `psycopg` v3,
+       not `psycopg2`)
      - `GROQ_API_KEY` = your Groq key
      - `CORS_ORIGINS` = `https://frontend-mu-seven-23.vercel.app`
-  7. Once deployed, copy the Render service URL (e.g. `https://option-a-xxxx.onrender.com`) and
-     set it as `NEXT_PUBLIC_API_URL` in the Vercel project's environment variables, then redeploy
-     the frontend (`vercel --prod` from `frontend/`, or via the Vercel dashboard's Redeploy
-     button) so the build picks up the new value.
+     - `PYTHON_VERSION` = `3.12.7` (Render defaults to a newer Python with no prebuilt
+       `pydantic-core` wheel, which fails to build from source on Render's read-only filesystem)
+  7. Set `NEXT_PUBLIC_API_URL` in the Vercel project's environment variables to the Render service
+     URL, then redeploy the frontend (`vercel --prod` from `frontend/`, or via the Vercel
+     dashboard's Redeploy button) so the build picks up the new value.
+  8. Since there's no Alembic migration step, a schema change to an already-existing table (e.g.
+     adding a column) requires a manual `ALTER TABLE` against the live database — `create_all()`
+     only creates missing tables, it doesn't alter existing ones.
